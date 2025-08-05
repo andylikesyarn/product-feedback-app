@@ -36,12 +36,23 @@ async function addOneSuggestion(submission) {
   //await result of database query
   await db.query(
     //sql query inserting vals into suggestion
-    "INSERT INTO suggestions (title, body, tag) VALUES ($1, $2, $3)",
+    "INSERT INTO suggestions (user_name, suggestion_title, suggestion_text, tag) VALUES ($1, $2, $3, $4)",
     //
-    [submission.title, submission.body, submission.tag]
+    [
+      submission.user_name,
+      submission.suggestion_title,
+      submission.suggestion_text,
+      submission.tag,
+    ]
   );
 }
 
+//HELPER function for /get-all-tags
+async function getAllTags() {
+  const result = await db.query("SELECT * FROM tags");
+  console.log(result);
+  return result.rows;
+}
 
 // Helper function for /add-one-tag
 async function addOneTag(tag) {
@@ -50,7 +61,7 @@ async function addOneTag(tag) {
     //sql query inserting vals into country
     "INSERT INTO tags (label) VALUES ($1)",
     //
-    [tag.tag]
+    [tag.label]
   );
 }
 /*
@@ -76,117 +87,48 @@ async function getSavedCountries() {
   console.log(result);
   return result.rows;
 }
-
+*/
 // ---------------------------------
 // API Endpoints
 // ---------------------------------
-// GET /get-all-countries
-app.get("/get-all-users", async (req, res) => {
-  const allUsers = await getAllUsers();
+// GET /get-all-suggestions
+app.get("/get-all-suggestions", async (req, res) => {
+  const allSuggestions = await getAllSuggestions();
   // res.send(JSON.stringify(allCountries));
-  res.json(allUsers);
+  res.json(allSuggestions);
 });
 
-// GET /get-latest-user
-app.get("/get-latest-user", async (req, res) => {
-  const lastUser = await getLatestUser();
-  res.json(lastUser);
-});
-
-// POST /add-one-country
-app.post("/add-one-user", async (req, res) => {
+// POST /add-one-suggestion
+app.post("/add-one-suggestion", async (req, res) => {
   //country is pulled from request body and saved here
-  const newUser = req.body;
+  const newSuggestion = req.body;
   //try running addOneCountry
   try {
-    await addOneUser(newUser);
+    await addOneSuggestion(newSuggestion);
     //if it works, display Country Added
-    res.json({ success: true, message: "User added." });
+    res.json({ success: true, message: "Suggestion added." });
   } catch (err) {
     //if it does not work, send error message.
     res.status(400).json({ success: false, error: err.message });
   }
 });
 
-// POST /update-one-user
-//defining a post request at the endpoint update-one-user
-app.post("/update-one-user", async (req, res) => {
-  //country categories are pulled from request body and saved here
-  const { name, email, country_name, bio } = req.body;
-  //run helper function, setting aboce var = to the second argument
-  try {
-    await updateOneUser(name, { email, country_name, bio });
-    //if it works, give country updated
-    res.json({ success: true, message: "User updated." });
-  } catch (err) {
-    //if it does not work, send error message.
-    res.status(400).json({ success: false, error: err.message });
-  }
+app.get("/get-all-tags", async (req, res) => {
+  const allTags = await getAllTags();
+  res.json(allTags);
 });
 
-// both functions res.send() and res.json() send a response
-// res.send() sends a response as a String
-// res.json() sends a response as a JSON object
-// GET /get-one-country/:name
-app.get("/get-one-country/:name", async (req, res) => {
-  //countryName = the name pulled from the url param
-  const countryName = req.params.name;
-  //set country = to the result of the function getOneCountry
-  const country = await getOneCountry(countryName);
-  //display result of getOneCountry, wich should be an object with all its attributes
-  res.json(country);
-});
-
-// GET /delete-one-country/:name
-app.delete("/delete-one-country/:name", async (req, res) => {
-  //deleteCountry = the name pulled from the url param
-  const deleteCountry = req.params.name;
-  //run function to delete country asynchronously
-  await deleteOneCountry(deleteCountry);
-  //then return CountryName was deleted
-  res.json(`${deleteCountry} was deleted`);
-
-  try {
-    await deleteOneCountry(deleteCountry);
-    res.json({ success: true, message: "Country deleted." });
-  } catch (err) {
-    //if it does not work, send error message.
-    res.status(400).json({ success: false, error: err.message });
-  }
-});
-
-// POST /add-one-country
-app.post("/add-one-country", async (req, res) => {
+// POST /add-one-tag
+app.post("/add-one-tag", async (req, res) => {
   //country is pulled from request body and saved here
-  const newCountry = req.body;
+  const newTag = req.body;
   //try running addOneCountry
   try {
-    await addOneCountry(newCountry);
+    await addOneTag(newTag);
     //if it works, display Country Added
-    res.json({ success: true, message: "Country added." });
+    res.json({ success: true, message: "Tag added." });
   } catch (err) {
     //if it does not work, send error message.
     res.status(400).json({ success: false, error: err.message });
   }
 });
-
-// POST /update-one-country
-//defining a post request at the endpoint update-one-country
-app.post("/update-one-country", async (req, res) => {
-  const { country_name } = req.body;
-  try {
-    const count = await updateOneCountry(country_name);
-    res.json({ success: true, count });
-  } catch (err) {
-    res.status(400).json({ success: false, error: err.message });
-  }
-});
-
-// GET /get-saved-users
-app.get("/get-saved-countries", async (req, res) => {
-  const allCountries = await getSavedCountries();
-  res.json(allCountries);
-});
-
-// -----// GET /get-all-countries
-*/

@@ -3,9 +3,12 @@ import "./Comps.css";
 
 function Info() {
   return (
-    <>
-      <h1>Product Feedback Full-Stack App</h1>
-    </>
+    <div className="info-box">
+      <p>
+        <span>My Company</span> <br />
+        feedback board
+      </p>
+    </div>
   );
 }
 

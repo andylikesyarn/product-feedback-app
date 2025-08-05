@@ -1,10 +1,21 @@
 import { useState, useEffect } from "react";
-import "./App.css";
+import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
 
+import "./index.css";
+import Home from "./Home.jsx";
+import Form from "./pages/Form.jsx";
 function App() {
   return (
     <>
-      <h1>Product Feedback Full-Stack App</h1>
+      <BrowserRouter>
+        {" "}
+        <Routes>
+          {" "}
+          {/*sets up routes */}
+          <Route path="/" element={<Home />} />
+          <Route path="/form" element={<Form />} />
+        </Routes>
+      </BrowserRouter>
     </>
   );
 }

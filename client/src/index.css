@@ -7,4 +7,18 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  --light-gray: #d3d3d3;
+  --white: #ffffff;
+  --light-blue: #adc5f6;
+  --blue: #0641b8;
+  --navy: #001d53;
+  --purple: #7407a3;
+  --dark-gray: #49494a;
+  --peach: #f7ae50;
+  --magenta: #ea37c0;
+  --bright-blue: #0475df;
+}
+
+.tag-box{
+  margin:1rem;
 }
