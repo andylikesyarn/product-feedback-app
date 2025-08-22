@@ -1,20 +1,58 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import "../components/Comps.css";
-import { BrowserRouter, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 function Form() {
   const text = "< go back";
+
+  // State for storing form inputs
+  const [formData, setFormData] = useState({
+    suggestion_title: "",
+    tag: "",
+    suggestion_text: "",
+  });
+
+  const [suggestion, setSuggestion] = useState(null);
+
+  // Update form state dynamically
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  // Handle submit
+  const handleSubmit = async (e) => {
+    e.preventDefault(); // prevent page refresh
+
+    try {
+      const response = await fetch("/api/add-one-suggestion", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData), // send the state
+      });
+
+      if (!response.ok) throw new Error("Failed to post suggestion");
+
+      const data = await response.json();
+      setSuggestion(data); // Store new suggestion in state
+      console.log("Suggestion posted:", data);
+    } catch (error) {
+      console.error("Error posting suggestion:", error);
+    }
+  };
+
   return (
     <div className="feedback-page">
-      {" "}
       <Link to="/">
         <button>{text}</button>
       </Link>
       <div className="plus-icon">+</div>
       <div className="feedback-box">
-        {" "}
         <h2>Create New Feedback</h2>
-        <form>
+        <form onSubmit={handleSubmit}>
           <fieldset>
             <div>
               <label htmlFor="suggestion_title">
@@ -26,6 +64,8 @@ function Form() {
                 type="text"
                 id="suggestion_title"
                 name="suggestion_title"
+                value={formData.suggestion_title}
+                onChange={handleChange}
                 required
               />
             </div>
@@ -33,40 +73,56 @@ function Form() {
 
           <fieldset>
             <div>
-              <label htmlFor="label">
+              <label htmlFor="tag">
                 <span>Category</span>:<br /> Choose a category for your
                 feedback.
               </label>
               <br />
-              <select id="label" name="label">
-                <option value="" disabled selected></option>
+              <select
+                id="tag"
+                name="tag"
+                value={formData.tag}
+                onChange={handleChange}
+                required
+              >
+                <option value="" disabled></option>
                 <option value="general">General</option>
                 <option value="accessibility">Accessibility</option>
                 <option value="information request">Information Request</option>
               </select>
             </div>
           </fieldset>
+
           <fieldset>
             <div>
               <label htmlFor="suggestion_text">
-                {" "}
-                <span>Feedback Detail</span>:<br /> Include any specific
-                information on what should be improved, added, etc.
+                <span>Feedback Detail</span>:<br /> Include specific details.
               </label>
               <br />
               <input
-                type="email"
+                type="text"
                 id="suggestion_text"
                 name="suggestion_text"
+                value={formData.suggestion_text}
+                onChange={handleChange}
                 required
               />
             </div>
           </fieldset>
 
-          <Link to="/Form">
-            <button>Reset Form</button>
-          </Link>
-          <button>Submit</button>
+          <button
+            type="reset"
+            onClick={() =>
+              setFormData({
+                suggestion_title: "",
+                tag: "",
+                suggestion_text: "",
+              })
+            }
+          >
+            Reset Form
+          </button>
+          <button type="submit">Submit</button>
         </form>
       </div>
     </div>

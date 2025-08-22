@@ -29,12 +29,17 @@ function Home() {
     //run function
   }, []); //no dependencies.
   console.log(savedSuggestions);
+
   return (
     <>
       <h1>Product Feedback Full-Stack App</h1>
       <Summary className="summary-comp" />
       <Info className="info-comp" />
-      <Tags className="tag-comp" />
+      <Tags
+        suggestions={savedSuggestions}
+        setSuggestions={setSavedSuggestions}
+        className="tag-comp"
+      />
       <Suggestions suggestions={savedSuggestions} className="suggestion-comp" />
     </>
   );

@@ -6,10 +6,9 @@
 // Importing our Node modules
 import express from "express"; // The framework that lets us easily build a web server
 import pg from "pg"; // pg stands for PostgreSQL, for talking to the database
-import config from "./config.js"; // we need access to our database connection credentials
-// connect to our PostgreSQL database, or db for short
+
 const db = new pg.Pool({
-  connectionString: config.databaseUrl, // credentials to access the database — keep this private!
+  connectionString: process.env.DATABASE_URL, // credentials to access the database — keep this private!
   ssl: true, // we will use SSL encryption when connecting to the database
 });
 const app = express(); // Creating an instance of the express module
@@ -64,6 +63,14 @@ async function addOneTag(tag) {
     [tag.label]
   );
 }
+
+async function getOneTag(tag) {
+  const result = await db.query("SELECT * FROM suggestions WHERE tag = $1", [
+    tag,
+  ]);
+  return result.rows;
+}
+
 /*
 // Helper function for /update-one-country
 async function updateOneCountry(country_name) {
@@ -118,6 +125,19 @@ app.get("/get-all-tags", async (req, res) => {
   res.json(allTags);
 });
 
+app.get("/get-one-tag/:label", async (req, res) => {
+  const label = req.params.label; // reading from query string
+  if (!label) {
+    return res.status(400).json({ success: false, error: "Label is required" });
+  }
+
+  try {
+    const matchingSuggestions = await getOneTag(label);
+    res.json(matchingSuggestions);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
 // POST /add-one-tag
 app.post("/add-one-tag", async (req, res) => {
   //country is pulled from request body and saved here

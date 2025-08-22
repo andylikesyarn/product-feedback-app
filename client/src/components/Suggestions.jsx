@@ -22,14 +22,18 @@ function Suggestions({ suggestions }) {
   return (
     <>
       <div className="suggestion-box">
-        {suggestions.map((suggestion) => (
-          <div className="suggestion-card" key={suggestion.suggestion_id}>
-            <h3>{suggestion.suggestion_title}</h3>
-            <p>{suggestion.suggestion_text}</p>
-            <p>left by {suggestion.user_name}</p>
-            <button>{suggestion.tag}</button>
-          </div>
-        ))}
+        {suggestions && suggestions.length > 0 ? (
+          suggestions.map((suggestion) => (
+            <div className="suggestion-card" key={suggestion.suggestion_id}>
+              <h3>{suggestion.suggestion_title}</h3>
+              <p>{suggestion.suggestion_text}</p>
+              <p>left by {suggestion.user_name}</p>
+              <button>{suggestion.tag}</button>
+            </div>
+          ))
+        ) : (
+          <div className="no-suggestions">No suggestions yet.</div>
+        )}
       </div>
     </>
   );

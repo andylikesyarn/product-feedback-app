@@ -13,7 +13,7 @@ function App() {
           {" "}
           {/*sets up routes */}
           <Route path="/" element={<Home />} />
-          <Route path="/form" element={<Form />} />
+          <Route path="/Form" element={<Form />} />
         </Routes>
       </BrowserRouter>
     </>
